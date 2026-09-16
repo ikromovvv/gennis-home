@@ -1,0 +1,55 @@
+@import "../abstracts/variables"
+
+.heading
+  color: $color-second
+  font-family: 'Outfit', 'Cabin Condensed', sans-serif
+  font-style: normal
+  font-weight: 800
+  font-size: 45px
+  margin-bottom: 45px
+
+
+.badge
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  width: fit-content
+  padding: 6px 18px
+  border-radius: 9999px
+  font-family: 'Outfit', sans-serif
+  font-size: 1.3rem
+  font-weight: 700
+  letter-spacing: 0.06em
+  text-transform: uppercase
+  background-color: rgba(255, 255, 255, 0.16)
+  border: 1px solid rgba(255, 255, 255, 0.35)
+  color: $color-white
+
+  &--light
+    background-color: rgba($color-main, 0.1)
+    border: 1px solid rgba($color-main, 0.25)
+    color: $color-main-dark
+
+
+@media (max-width: 1024px)
+  .heading
+    font-size: 40px
+
+
+.title
+  width: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-bottom: 10rem
+  h1
+    font-size: 3rem
+    font-style: normal
+    font-weight: normal
+
+
+@media (max-width: 425px)
+  .title
+    h1
+      font-size: 4rem
+      text-align: center

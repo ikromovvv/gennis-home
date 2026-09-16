@@ -1,0 +1,116 @@
+@import "styles/abstracts/variables"
+
+body
+  background-color: #F5F9FC
+
+.platformLayout
+  display: flex
+  min-height: 100vh
+  font-family: 'DM Sans', sans-serif
+
+.platformLayout__sidebar
+  width: 26rem
+  flex-shrink: 0
+  background-color: $color-white
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.05)
+  display: flex
+  flex-direction: column
+  padding: 2.5rem 1.5rem
+  position: sticky
+  top: 0
+  height: 100vh
+
+.platformLayout__brand
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  gap: .8rem
+  padding: 0 1rem
+  margin-bottom: 3rem
+
+  span
+    font-family: 'Outfit', sans-serif
+    font-weight: 700
+    font-size: 1.4rem
+    color: #8a94a6
+    text-transform: uppercase
+    letter-spacing: .04em
+
+.platformLayout__logo
+  height: 5rem
+  width: auto
+
+.platformLayout__nav
+  display: flex
+  flex-direction: column
+  gap: .5rem
+  flex-grow: 1
+
+.platformLayout__navItem
+  display: flex
+  align-items: center
+  gap: 1.2rem
+  padding: 1.2rem 1.5rem
+  border-radius: 12px
+  color: $color-grey-dark
+  font-family: 'Outfit', sans-serif
+  font-weight: 600
+  font-size: 1.6rem
+  background: none
+  border: none
+  width: 100%
+  text-align: left
+  cursor: pointer
+  transition: all .2s ease
+
+  i
+    font-size: 1.7rem
+    width: 2rem
+    text-align: center
+    color: $color-main
+
+  &:hover
+    background-color: rgba($color-main, 0.08)
+
+  &.active
+    background-color: rgba($color-main, 0.12)
+    color: $color-main-dark
+
+.platformLayout__bottom
+  display: flex
+  flex-direction: column
+  gap: .5rem
+  padding-top: 2rem
+  border-top: 1px solid $color-grey-light
+
+.platformLayout__logout
+  color: #E5484D
+  i
+    color: #E5484D
+  &:hover
+    background-color: rgba(#E5484D, 0.08)
+
+.platformLayout__main
+  flex-grow: 1
+  padding: 3rem
+  overflow-x: hidden
+
+@media (max-width: 900px)
+  .platformLayout
+    flex-direction: column
+  .platformLayout__sidebar
+    width: 100%
+    height: auto
+    position: relative
+    flex-direction: row
+    flex-wrap: wrap
+    align-items: center
+  .platformLayout__brand
+    margin-bottom: 0
+  .platformLayout__nav
+    flex-direction: row
+    flex-wrap: wrap
+  .platformLayout__bottom
+    flex-direction: row
+    border-top: none
+    padding-top: 0

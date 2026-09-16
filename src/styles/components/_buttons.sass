@@ -1,0 +1,161 @@
+@import "../abstracts/variables"
+
+// Global default for every `<input type="submit" className="input-submit"/>`
+// across the app's forms/modals — previously only styled inside .login,
+// leaving it as an unstyled native browser button everywhere else.
+input.input-submit
+  -webkit-appearance: none
+  appearance: none
+  padding: 1.1rem 3rem
+  background-image: linear-gradient(135deg, $color-main-dark 0%, $color-main 60%, $color-main-light 100%)
+  outline: none
+  border: none
+  color: $color-white
+  font-size: 1.6rem
+  font-family: 'Outfit', sans-serif
+  border-radius: 9999px
+  font-weight: 700
+  cursor: pointer
+  box-shadow: 0 4px 16px rgba($color-main-dark, 0.35)
+  transition: all .3s ease
+  &:hover, &:focus
+    box-shadow: 0 8px 24px rgba($color-main-dark, 0.45)
+    transform: translateY(-2px)
+  &:active
+    transform: scale(0.96)
+
+.btn
+  &:link
+    text-decoration: none
+    padding: 1.5rem 4rem
+    display: inline-block
+    border-radius: 9999px
+    transition: all .2s
+    position: relative
+    font-size: $font-size
+    font-family: 'Outfit', sans-serif
+    font-weight: 700
+
+  &:visited
+
+    text-decoration: none
+    padding: 1.5rem 4rem
+    display: inline-block
+    border-radius: 9999px
+    transition: all .2s
+    position: relative
+    font-size: 1.6rem
+    font-family: 'Outfit', sans-serif
+    font-weight: 700
+
+  &:hover
+    transform: translateY(-0.3rem)!important
+    box-shadow: 0 1rem 2rem rgba($color-black,.2)
+    &::after
+        transform: scaleX(1.4) scaleY(1.6)
+        opacity: 0
+
+
+  &:active
+    transform: translateY(-0.1rem)!important
+    box-shadow: 0 0.5rem 1rem rgba($color-black,.2)
+
+  &::after
+    content: ""
+    display: inline-block
+    height: 100%
+    width: 100%
+    border-radius: 9999px
+    position: absolute
+    top: 0
+    left: 0
+    z-index: -1
+    transition: all .4s
+
+  &__animated
+    animation-name: animateBtn
+    animation-duration: 0.8s
+    animation-timing-function: ease
+
+
+  &__white
+    background-color: $color-white
+    color: $color-grey-dark
+    &::after
+        background-color: $color-white
+  &__dark
+    background-image: linear-gradient(135deg, $color-main-dark 0%, $color-main 60%, $color-main-light 100%)
+    color: $color-white
+    box-shadow: 0 4px 16px rgba($color-main-dark, 0.35)
+    &::after
+        background-image: linear-gradient(135deg, $color-main-dark 0%, $color-main 60%, $color-main-light 100%)
+  &__contact
+    font-size: 1.5rem !important
+    padding: 1.2rem 3.5rem !important
+
+
+.backBtn
+  width: fit-content
+  height: fit-content
+  padding: .7rem 2rem
+  font-size: 1.6rem
+  color: white
+  background-color: $color-grey-dark
+  border-radius: 9999px
+  cursor: pointer
+  user-select: none
+  transition: all .6s
+  display: flex
+  align-items: center
+  justify-content: center
+  i
+    font-size: 1.8rem
+    color: white
+    margin-right: 1rem
+  &:hover
+    background-color: $color-main-dark
+    box-shadow: 0 0 7px 1px $color-main-light
+  &:active
+    transform: scale(.9)
+
+
+@keyframes animateBtn
+  from
+    opacity: 0
+    transform: scale(0.5)
+  to
+    opacity: 1
+    transform: scale(1)
+
+
+@media (max-width: 770px)
+  .btn
+    &:link
+      font-size: 2.4rem
+
+    &:visited
+      font-size: 2.4rem
+    &__contact
+      font-size: 2rem !important
+      padding: 1.2rem 3.5rem !important
+
+  .backBtn
+    font-size: 2rem
+    i
+      font-size: 2.7rem
+
+@media (max-width: 500px)
+  .btn
+    &:link
+      padding: 1.7rem 5rem
+      font-size: 3rem
+
+    &:visited
+      padding: 1.7rem 5rem
+      font-size: 3rem
+
+  .backBtn
+    padding: 1rem 2rem
+    font-size: 2.7rem
+    i
+      font-size: 2.7rem
