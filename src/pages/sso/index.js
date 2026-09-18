@@ -3,11 +3,12 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {V2BackUrl} from "constants/global";
 import DefaultLoader from "components/loader/defaultLoader/DefaultLoader";
 
-// Redeems a short-lived token minted by management-v2's /auth/gennis-sso
-// (office.gennis.uz's "Gennis web site change" link) — the token is
-// already a valid gennis-v2 access token on arrival (shared SECRET_KEY),
-// so this just needs to store it the same way a normal /login does and
-// confirm it works before handing off to /platform.
+// Redeems a short-lived bridge token minted by management-v2's
+// /auth/gennis-sso (office.gennis.uz's "Gennis web site change" link),
+// signed with a dedicated SSO_SHARED_SECRET rather than either system's
+// real session-signing key. It's not a valid gennis-v2 access token by
+// itself, so it's exchanged here for a real one via gennis-v2's
+// /auth/sso-exchange, then stored exactly like a normal /login response.
 const Sso = () => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
@@ -20,14 +21,17 @@ const Sso = () => {
             return
         }
 
-        fetch(`${V2BackUrl}auth/me`, {
-            headers: {"Authorization": "Bearer " + token}
+        fetch(`${V2BackUrl}auth/sso-exchange`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({token})
         })
             .then(async res => {
-                if (!res.ok) throw new Error("invalid_token")
-                const user = await res.json()
-                sessionStorage.setItem("v2_access_token", token)
-                sessionStorage.setItem("v2_user", JSON.stringify(user))
+                const data = await res.json().catch(() => null)
+                if (!res.ok || !data?.access_token) throw new Error("invalid_token")
+                sessionStorage.setItem("v2_access_token", data.access_token)
+                sessionStorage.setItem("v2_refresh_token", data.refresh_token)
+                sessionStorage.setItem("v2_user", JSON.stringify(data.user))
                 navigate("/platform", {replace: true})
             })
             .catch(() => setError(true))
