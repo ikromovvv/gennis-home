@@ -9,6 +9,9 @@ import BackButton from "components/platform/platformUI/backButton/backButton";
 
 import styles from "./book.module.sass"
 
+const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+const formatPrice = (price) => price ? `${Number(price).toLocaleString("ru-RU")} so'm` : price;
+
 const Book = () => {
 
     const {id} = useParams()
@@ -85,6 +88,8 @@ const Book = () => {
         <div className={styles.book}>
             <div className={styles.book__header}>
                 <BackButton/>
+                <Link to={"/books"} className={styles.book__homeLink}>Kitoblar</Link>
+                <Link to={"/"} className={styles.book__homeLink}>Bosh sahifa</Link>
             </div>
 
             <div className={styles.book__wrapper}>
@@ -123,13 +128,13 @@ const Book = () => {
                 </div>
 
                 <div className={styles.book__info}>
-                    <h1>{book.name}</h1>
+                    <h1>{capitalize(book.name)}</h1>
                     <p>{book.desc}</p>
 
                     <div className={styles.line}></div>
 
                     <div onClick={navigateToPlatform} className={styles.book__infoBtn}>
-                        {book.price}
+                        {formatPrice(book.price)}
                     </div>
                 </div>
             </div>

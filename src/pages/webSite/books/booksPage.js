@@ -12,6 +12,9 @@ import {fetchBooks} from "slices/booksSlice";
 import {BackUrlForDoc} from "constants/global";
 import Search from "components/platform/platformUI/search";
 
+const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+const formatPrice = (price) => price ? `${Number(price).toLocaleString("ru-RU")} so'm` : price;
+
 const BooksPage = () => {
 
     const [search, setSearch] = useState("")
@@ -46,8 +49,8 @@ const BooksPage = () => {
     return (
         <div className={style.bookPage}>
             <div className={style.bookPage__header}>
-                <Link to={".."} className={style.bookPage__backBtn}>
-                    <i className="fas fa-chevron-left"></i>
+                <Link to={"/"} className={style.bookPage__backBtn}>
+                    <i className="fas fa-chevron-left"></i> Bosh sahifa
                 </Link>
                 <h1 className={style.bookPage__title}>
                     Kitoblar
@@ -67,8 +70,8 @@ const BooksPage = () => {
                             <Link to={`${item.id}`} className={style.bookPage__item}>
                                 <img src={`${BackUrlForDoc}${item.images[0].img}`} alt=""/>
                                 <div className={style.info}>
-                                    <h3>{item.name}</h3>
-                                    <h2>{item.price}</h2>
+                                    <h3>{capitalize(item.name)}</h3>
+                                    <h2>{formatPrice(item.price)}</h2>
                                 </div>
                             </Link>
                         )
