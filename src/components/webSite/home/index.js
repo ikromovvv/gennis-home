@@ -1,38 +1,20 @@
 import classNames from "classnames";
 import {useEffect, useState, useContext, useRef, useCallback} from "react";
-import {useDropzone} from "react-dropzone";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {motion} from "framer-motion";
 import {Link} from "react-router-dom";
-import {isMobile, isMobileOnly} from "react-device-detect";
+import {isMobile} from "react-device-detect";
 
 import {useHttp} from "hooks/http.hook";
-import {BackUrl, BackUrlForDoc, headers, headersImg, ROLES} from "constants/global";
-import {
-    fetchingImageItems,
-    fetchedImageItems,
-    fetchedImageError,
-    fetchedVideoItems,
-    fetchedNews,
-    fetchedCertificates,
-    fetchedHrefs,
-    fetchedSubjects,
-    fetchedTeachers,
-    fetchedAdvantages, fetchedLocations
-} from "slices/webSiteSlice";
-import Modal from "components/platform/platformUI/modal";
+import {BackUrl, BackUrlForDoc} from "constants/global";
 import Header from "components/webSite/header/Header";
-import InputForm from "components/platform/platformUI/inputForm";
 import {Context} from "context/websiteContext";
 
 import cls from './style.module.sass'
 import WebButton from "components/webSite/webSiteUI/webButton/webButton";
 import {setMessage} from "slices/messageSlice";
 import DefaultLoader from "components/loader/defaultLoader/DefaultLoader";
-import DefaultLoaderSmall from "components/loader/defaultLoader/defaultLoaderSmall";
-import {useAuth} from "hooks/useAuth";
-import RequireAuthChildren from "components/requireAuthChildren/requireAuthChildren";
 import {createPortal} from "react-dom";
 // import {animateBox, animateText} from "frame-motion";
 
@@ -45,43 +27,13 @@ const Home = () => {
         setSectionTop(cur => ({...cur, home: sectionRef?.current?.offsetTop}))
     }, [setSectionTop])
 
-    const {register, handleSubmit, setValue} = useForm()
+    const {register, handleSubmit} = useForm()
     const {request} = useHttp()
-    const formData = new FormData()
     const dispatch = useDispatch()
 
-    const [changeStatus, setChangeStatus] = useState(false)
-    const [changeImage, setChangeImage] = useState({})
     const [mobileMenuStatus, setMobileMenuStatus] = useState(false)
-    const [changeItem, setChangeItem] = useState({})
     const {image,locations} = useSelector(state => state?.website)
     const [loading, setLoading] = useState(false)
-
-
-    const onChange = () => {
-        setChangeItem(image)
-        setChangeStatus(true)
-    }
-
-    const onSubmit = (data) => {
-        dispatch(fetchingImageItems())
-
-        formData.append('name', data.name)
-        formData.append('text',data.text)
-        formData.append('file', changeImage)
-
-        request(`${BackUrl}home_page/add_home_design`, "POST", formData, headersImg())
-            .then(res => {
-                if (res.success) {
-                    setChangeStatus(false)
-                }
-                dispatch(fetchedImageItems(res.design))
-            })
-            .catch(dispatch(fetchedImageError))
-        formData.delete("name")
-        formData.delete("text")
-        formData.delete("file")
-    }
 
     const onSubmitReg = (data) => {
 
@@ -108,9 +60,6 @@ const Home = () => {
                 setLoading(false)
             })
     }
-
-
-    const {role} = useAuth()
 
     return (
         <section
@@ -142,14 +91,6 @@ const Home = () => {
                 setStatus={setMobileMenuStatus}
             />
             <motion.div className={cls.home_information}>
-
-                <RequireAuthChildren allowedRules={[ROLES.Smm]}>
-                    <i
-                        className={classNames("fas fa-pen", cls.icon)}
-                        onClick={onChange}
-                    />
-                </RequireAuthChildren>
-
 
                 <motion.div className={cls.information_about}>
                     <span className="badge">GENNIS Ta'lim Markazi</span>
@@ -237,81 +178,7 @@ const Home = () => {
                 </motion.div>
             </motion.div>
 
-            <RequireAuthChildren allowedRules={[ROLES.Smm]}>
-                <ChangeModal
-                    changeImage={changeImage}
-                    image={image}
-                    onSubmit={onSubmit}
-                    changeStatus={changeStatus}
-                    setChangeStatus={setChangeStatus}
-                    setChangeImage={setChangeImage}
-                    item={changeItem}
-                />
-            </RequireAuthChildren>
-
         </section>
-    )
-}
-
-const ChangeModal = ({changeImage, image, onSubmit, changeStatus, setChangeStatus, setChangeImage, item}) => {
-    useEffect(() => {
-        setValue("name", item?.name)
-        setValue("text", item?.text)
-    }, [item])
-    const {register, handleSubmit, setValue} = useForm()
-    const {getRootProps, getInputProps} = useDropzone({
-        onDrop: (acceptedFiles) => {
-            setChangeImage(acceptedFiles[0])
-        }
-    })
-
-    return (
-        <Modal
-            activeModal={changeStatus}
-            setActiveModal={setChangeStatus}
-        >
-            <div className={cls.home__modal}>
-                <h1>Malumotlarni o'zgartirish</h1>
-                <div className={cls.wrapper}>
-                    <div
-                        className={cls.home__modal_img}
-                        {...getRootProps()}
-                    >
-                        {
-                            changeImage?.path ? <img src={URL.createObjectURL(changeImage)} alt=""/>
-                                : image?.img ? <img src={BackUrlForDoc + image?.img} alt=""/>
-                                    : <>
-                                        <input
-                                            required
-                                            {...getInputProps()}
-                                            type="file"
-                                        />
-                                        <i className="far fa-image"/>
-                                    </>
-                        }
-                    </div>
-                    <form
-                        className={cls.home__modal_text}
-                        onSubmit={handleSubmit(onSubmit)}
-                    >
-                        <InputForm
-                            required
-                            register={register}
-                            name={'name'}
-                            placeholder={'Title'}
-                        />
-                        <textarea
-                            placeholder="Text"
-                            required
-                            {...register("text")}
-                            cols="30"
-                            rows="10"
-                        />
-                        <WebButton>O'zgartirish</WebButton>
-                    </form>
-                </div>
-            </div>
-        </Modal>
     )
 }
 
