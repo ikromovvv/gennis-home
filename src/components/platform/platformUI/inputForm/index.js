@@ -4,7 +4,7 @@ import React from 'react';
 import "./input.sass"
 
 
-const InputForm = ({title, name, type, required, register, defaultValue, placeholder, value, error, onChange, onBlur, clazzLabel}) => {
+const InputForm = ({title, name, type, inputMode, required, register, defaultValue, placeholder, value, error, onChange, onBlur, clazzLabel}) => {
 
 
     return (
@@ -19,6 +19,7 @@ const InputForm = ({title, name, type, required, register, defaultValue, placeho
                 placeholder={placeholder}
                 required={required}
                 type={type}
+                inputMode={inputMode}
                 defaultValue={defaultValue}
                 id={name}
                 className="input-fields"

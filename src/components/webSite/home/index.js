@@ -207,17 +207,18 @@ const Home = () => {
                         <input
                             required
                             type="text"
-                            placeholder="Name"
+                            placeholder="Ismingiz"
                             {...register("name")}
                         />
                         <input
                             required
-                            type="phone"
+                            type="tel"
+                            inputMode="numeric"
                             placeholder="+998 (__) ___ __ __"
                             {...register("phone")}
                         />
                         <select required  {...register("location_id")} >
-                            <option value="">Filial</option>
+                            <option value="">Filialni tanlang</option>
                             {
                                 locations.map(item => {
                                     return (
@@ -227,6 +228,10 @@ const Home = () => {
                                 })
                             }
                         </select>
+                        <label className={cls.consent}>
+                            <input required type="checkbox" {...register("consent")} />
+                            Shaxsiy ma'lumotlarimni qayta ishlashga roziman
+                        </label>
                         <WebButton>Registratsiya</WebButton>
                     </motion.form>
                 </motion.div>

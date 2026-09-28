@@ -49,7 +49,7 @@ const Header = ({status, setStatus}) => {
         },
         {
             name: "advantages",
-            title: "Afzallilar",
+            title: "Afzalliklar",
             type: "btn"
         },
         {
@@ -57,12 +57,6 @@ const Header = ({status, setStatus}) => {
             title: "Kitoblar",
             type: "link",
             href: "/books"
-        },
-        {
-            name: "consulting",
-            title: "Consulting",
-            type: "link",
-            href: "/"
         },
         {
             name: "contact",

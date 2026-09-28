@@ -68,7 +68,7 @@ const Course = () => {
 
     const renderCourses = (arr, setStatus) => {
         if (arr.length === 0) {
-            return <h2>No</h2>
+            return <h2>Kurslar hozircha qo'shilmagan</h2>
         }
         return arr.map((item, i) => {
             // if (isMobile && i >= 1) return null
@@ -162,17 +162,18 @@ const Course = () => {
                                 required
                                 register={register}
                                 name={"name"}
-                                placeholder={"Name"}
+                                placeholder={"Ismingiz"}
                             />
                             <InputForm
                                 required
                                 register={register}
                                 name={"phone"}
-                                type={"number"}
+                                type={"tel"}
+                                inputMode={"numeric"}
                                 placeholder={"+998 (__) ___ __ __"}
                             />
                             <select required {...register("location_id")} >
-                                <option value="">Filial</option>
+                                <option value="">Filialni tanlang</option>
                                 {
                                     locations.map(item => {
                                         return (
@@ -182,6 +183,10 @@ const Course = () => {
                                     })
                                 }
                             </select>
+                            <label className={cls.consent}>
+                                <input required type="checkbox" {...register("consent")} />
+                                Shaxsiy ma'lumotlarimni qayta ishlashga roziman
+                            </label>
                             {/*<button>*/}
                             {/*    Registratsiya*/}
                             {/*</button>*/}

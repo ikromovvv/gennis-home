@@ -1,21 +1,17 @@
 import classNames from "classnames";
-import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import cls from "./style.module.sass";
 import logo from "assets/website/logo.png"
 import {useForm} from "react-hook-form";
 import {useHttp} from "hooks/http.hook";
-import {BackUrl, headers, ROLES} from "constants/global";
+import {BackUrl} from "constants/global";
 import {Context} from "context/websiteContext";
-import Modal from "components/platform/platformUI/modal";
-import InputForm from "components/platform/platformUI/inputForm";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {isMobileOnly} from "react-device-detect";
 import {motion} from "framer-motion";
-import {changeLocation, changeHrefs} from "slices/webSiteSlice";
 import WebButton from "components/webSite/webSiteUI/webButton/webButton";
 import {setMessage} from "slices/messageSlice";
-import RequireAuthChildren from "components/requireAuthChildren/requireAuthChildren";
 import {createPortal} from "react-dom";
 import DefaultLoader from "components/loader/defaultLoader/DefaultLoader";
 
@@ -56,79 +52,12 @@ const Footer = () => {
             setSectionTop(cur => ({...cur, contact: sectionRef?.current?.offsetTop}))
     }, [setSectionTop, teachersLoadingStatus])
 
-    const token = sessionStorage.getItem("token")
-    const formData = new FormData()
-    const {register, handleSubmit, setValue} = useForm()
+    const {register, handleSubmit} = useForm()
     const dispatch = useDispatch()
     const {request} = useHttp()
-    const [changeStatus, setChangeStatus] = useState(false)
-    const [changeLocStatus, setChangeLocStatus] = useState(false)
-    const [changeItem, setChangeItem] = useState({})
-    const [changeLoc, setChangeLoc] = useState({})
-    const [changeImage, setChangeImage] = useState({})
     const [activeLoc, setActiveLoc] = useState(0)
     const [selectedItem, setSelectedItem] = useState(locations[0])
     const [loading, setLoading] = useState(false)
-
-    const onSubmitHrefs = (data) => {
-        const res = {
-            id: changeItem?.id,
-            link: data?.link,
-            name: data?.name
-        }
-        console.log(res)
-        formData.append("res", JSON.stringify(res))
-        formData.append("img", changeImage)
-        request(`${BackUrl}home_page/change_link`, "POST", formData, {"Authorization": "Bearer " + token})
-            .then(res => {
-                setChangeStatus(false)
-                dispatch(changeHrefs(res?.link))
-            })
-            .catch(err => console.log(err))
-        formData.delete("res")
-        formData.delete("img")
-    }
-
-    const onSubmitLoc = (data) => {
-        const res = {
-            link: data?.locLink?.slice(
-                data?.locLink.indexOf("src") + 5,
-                data?.locLink.indexOf("style") - 7
-            ),
-            number: data?.locNumber,
-            location: data?.locLocation
-        }
-        request(`${BackUrl}home_page/change_locations/${changeLoc?.id}`, "POST", JSON.stringify(res), headers())
-            .then(res => {
-                setChangeLocStatus(false)
-                setSelectedItem(res?.location)
-                dispatch(changeLocation(res?.location))
-            })
-            .catch(err => console.log(err))
-    }
-
-    const onChangeModal = (id) => {
-        hrefs.filter(item => {
-            if (item.id === id) {
-                setChangeItem(item)
-                setValue("name", item.name)
-                setValue("link", item.link)
-            }
-        })
-        setChangeStatus(true)
-    }
-
-    const onChangeLoc = (id) => {
-        locations.filter(item => {
-            if (item.id === id) {
-                setChangeLoc(item)
-                setValue("locLink", item.link)
-                setValue("locLocation", item.location)
-                setValue("locNumber", item.number)
-            }
-        })
-        setChangeLocStatus(true)
-    }
 
     const animateChildren = {
         hidden: {
@@ -148,81 +77,6 @@ const Footer = () => {
             y: 0,
         }
     }
-
-    const ModalChange = useCallback(({changeStatus, setChangeStatus, onSubmitHrefs, changeItem, changeImage}) => {
-        return (
-            <Modal
-                activeModal={changeStatus}
-                setActiveModal={setChangeStatus}
-            >
-                <div className={cls.footer__modal}>
-                    <div className={cls.wrapper}>
-                        <h1>Silkani o'zgartirish</h1>
-                        <form
-                            className={cls.wrapper__container}
-                            onSubmit={handleSubmit(onSubmitHrefs)}
-                        >
-                            <InputForm
-                                required
-                                value={changeItem?.name}
-                                defaultValue={changeItem?.name}
-                                register={register}
-                                name={"name"}
-                                placeholder={"Name"}
-                            />
-                            <InputForm
-                                required
-                                value={changeItem?.link}
-                                register={register}
-                                name={"link"}
-                                placeholder={"Link"}
-                            />
-                            <WebButton>
-                                O'zgartirish
-                            </WebButton>
-                        </form>
-                    </div>
-                </div>
-            </Modal>
-        )
-    }, [changeItem])
-
-    const ModalChangeLocation = useCallback(({status, setStatus, onSubmitLoc, changeItem}) => {
-        return (
-            <Modal
-                activeModal={status}
-                setActiveModal={setStatus}
-            >
-                <div className={cls.footer__modalLoc}>
-                    <div className={cls.footer__modalLoc_inner}>
-                        <h1>Lokatsiyani o'zgartirish</h1>
-                        <form
-                            className={cls.wrapperLoc}
-                            onSubmit={handleSubmit(onSubmitLoc)}
-                        >
-                            <h1>{changeItem?.name}</h1>
-                            <InputForm
-                                register={register}
-                                name={'locLink'}
-                                placeholder={'Link'}
-                            />
-                            <InputForm
-                                register={register}
-                                name={'locLocation'}
-                                placeholder={'Location'}
-                            />
-                            <InputForm
-                                register={register}
-                                name={'locNumber'}
-                                placeholder={'Number'}
-                            />
-                            <WebButton>O'zgartirish</WebButton>
-                        </form>
-                    </div>
-                </div>
-            </Modal>
-        )
-    }, [changeLoc])
 
     const onSubmitReg = (data) => {
         setLoading(true)
@@ -274,20 +128,6 @@ const Footer = () => {
                     document.body
                 ) : null
             }
-            <ModalChange
-                changeImage={changeImage}
-                setChangeImage={setChangeImage}
-                changeItem={changeItem}
-                changeStatus={changeStatus}
-                setChangeStatus={setChangeStatus}
-                onSubmitHrefs={onSubmitHrefs}
-            />
-            <ModalChangeLocation
-                status={changeLocStatus}
-                setStatus={setChangeLocStatus}
-                onSubmitLoc={onSubmitLoc}
-                changeItem={changeLoc}
-            />
             <div className={cls.footer__wrapper}>
                 <div className={cls.footer_branches}>
                     <div className={cls.location}>
@@ -308,12 +148,6 @@ const Footer = () => {
                                         }}
                                     >
                                         {item.name}
-                                        <RequireAuthChildren allowedRules={[ROLES.Smm]}>
-                                            <i
-                                                className={classNames("fas fa-pen", cls.changeLoc)}
-                                                onClick={() => onChangeLoc(item.id)}
-                                            />
-                                        </RequireAuthChildren>
                                     </div>
                                 )
                             })
@@ -328,13 +162,6 @@ const Footer = () => {
                                 hrefs.map((item, i) => {
                                     return (
                                         <div key={i} className={cls.links}>
-                                            <RequireAuthChildren allowedRules={[ROLES.Smm]}>
-                                                <i
-                                                    className={classNames("fas fa-pen", cls.change)}
-                                                    onClick={() => onChangeModal(item.id)}
-                                                />
-                                            </RequireAuthChildren>
-
                                             <i className={classNames(list[i]?.icon, cls.bigIcon, {
                                                 [cls.red]: i === 0
                                             })}/>
@@ -381,12 +208,6 @@ const Footer = () => {
                                         custom={i + 1}
                                         className={cls.links}
                                     >
-                                        <RequireAuthChildren allowedRules={[ROLES.Smm]}>
-                                            <i
-                                                className={classNames("fas fa-pen", cls.change)}
-                                                onClick={() => onChangeModal(item.id)}
-                                            />
-                                        </RequireAuthChildren>
                                         <i className={list[i]?.icon}/>
                                         <h2>{item.name}</h2>
                                         <a href={item?.link}>{list[i]?.src}</a>
@@ -405,17 +226,18 @@ const Footer = () => {
                     <input
                         required
                         type="text"
-                        placeholder="Enter your name"
+                        placeholder="Ismingiz"
                         {...register("name")}
                     />
                     <input
                         required
-                        type="number"
-                        placeholder="Enter your number"
+                        type="tel"
+                        inputMode="numeric"
+                        placeholder="Telefon raqamingiz"
                         {...register("phone")}
                     />
                     <select required {...register("location_id")}>
-                        <option value="">Filial</option>
+                        <option value="">Filialni tanlang</option>
                         {
                             locations.map(item => {
                                 return (
@@ -424,6 +246,10 @@ const Footer = () => {
                             })
                         }
                     </select>
+                    <label className={cls.consent}>
+                        <input required type="checkbox" {...register("consent")} />
+                        Shaxsiy ma'lumotlarimni qayta ishlashga roziman
+                    </label>
                     <WebButton>Yuborish</WebButton>
                 </form>
             </div>
