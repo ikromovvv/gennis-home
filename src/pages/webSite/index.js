@@ -8,6 +8,7 @@ import HomePage from "pages/webSite/home/homePage";
 import BooksPage from "pages/webSite/books/booksPage";
 import Book from "pages/webSite/books/book/book";
 import TeacherInfo from "pages/webSite/teacherInfo";
+import NotFound from "pages/webSite/notFound";
 import {BackUrl, V2BackUrl, headers} from "constants/global";
 import {
     fetchedAdvantages,
@@ -121,6 +122,7 @@ const WebSite = () => {
                                     <Route path={"books"} element={<BooksPage/>}/>
                                     <Route path={"books/:id"} element={<Book/>}/>
                                     <Route path={"teacherInfo/:id"} element={<TeacherInfo/>}/>
+                                    <Route path={"*"} element={<NotFound/>}/>
                                 </Routes>
                             </Context.Provider>
                         </>
