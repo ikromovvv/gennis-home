@@ -1,11 +1,12 @@
 import {motion} from "framer-motion";
 
+import userImg from "assets/user-interface/user_image.png"
 import cls from './style.module.sass'
 import {isMobile} from "react-device-detect";
 import {useContext, useEffect, useRef, useState} from "react";
 import {Context} from "context/websiteContext";
 import {useSelector} from "react-redux";
-import {BackUrlForDoc} from "constants/global";
+import {resolveImg} from "constants/global";
 import {Link} from "react-router-dom";
 import classNames from "classnames";
 
@@ -76,11 +77,11 @@ const Teacher = () => {
                             height: "160px"
                         }}
                     >
-                        <img src={BackUrlForDoc + item.teacher_img} alt=""/>
+                        <img src={item.teacher_img ? resolveImg(item.teacher_img) : userImg} alt=""/>
                     </Link>
                     <div className={cls.texts}>
                         <h2>{item.full_name}</h2>
-                        <h4>{item.subjects[0]}</h4>
+                        <h4>{item.subjects?.[0]}</h4>
                         <div>
 
                             {item.text}

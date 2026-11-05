@@ -10,9 +10,9 @@ import InputForm from "components/platform/platformUI/inputForm";
 import {useForm} from "react-hook-form";
 import classNames from "classnames";
 import WebButton from "components/webSite/webSiteUI/webButton/webButton";
-import {BackUrl, ClassroomUrl, ClassroomUrlForDoc} from "constants/global";
+import {resolveImg} from "constants/global";
 import {setMessage} from "slices/messageSlice";
-import {useHttp} from "hooks/http.hook";
+import {submitLead} from "hooks/submitLead";
 import {createPortal} from "react-dom";
 import DefaultLoader from "components/loader/defaultLoader/DefaultLoader";
 
@@ -83,11 +83,14 @@ const Course = () => {
                     ref={el => ref.current[i] = el}
                     className={cls.box}
                 >
-                    <div className={cls.box_icon}>
-                        <img src={`${ClassroomUrlForDoc}${item.img}`} alt=""/>
-                    </div>
+                    {
+                        item.img ? <div className={cls.box_icon}>
+                            <img src={resolveImg(item.img)} alt=""/>
+                        </div> : null
+                    }
                     <div>
-                        {item.desc}
+                        <strong>{item.desc}</strong>
+                        {item.text ? <p>{item.text}</p> : null}
                     </div>
                     {/*<button*/}
                     {/*    className={cls.reg_item}*/}
@@ -109,32 +112,21 @@ const Course = () => {
     }
 
 
-    const {request} = useHttp()
     const dispatch = useDispatch()
 
     const onSubmitReg = (data) => {
         setModalStatus(false)
         setLoading(true)
-        request(`${BackUrl}lead/register_lead`, 'POST', JSON.stringify({...data,subject_id: clickedSubject}))
+        submitLead(data, clickedSubject)
             .then(res => {
                 setLoading(false)
-                if (res.success) {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "success",
-                        active: true
-                    }))
-                } else {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "error",
-                        active: true
-                    }))
-                }
+                dispatch(setMessage({
+                    msg: res.msg,
+                    type: res.success ? "success" : "error",
+                    active: true
+                }))
             })
-            .catch(err => {
-                setLoading(false)
-            })
+            .catch(() => setLoading(false))
     }
 
     return (

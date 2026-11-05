@@ -19,7 +19,7 @@ const App = () => {
             <Route path="/sso" element={<Sso/>}/>
             <Route element={<RequireAuth allowedRules={V2_WEBSITE_ADMIN_ROLES}/>}>
                 <Route path="/platform" element={<Platform/>}>
-                    <Route index element={<Navigate to="Advantages" replace/>}/>
+                    <Route index element={<Navigate to="Hero" replace/>}/>
                     <Route path="/platform/*" element={<PlatformWebsiteEdit/>}/>
                 </Route>
             </Route>

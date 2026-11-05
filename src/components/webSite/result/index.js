@@ -7,7 +7,7 @@ import {isMobile} from "react-device-detect";
 import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Context} from "context/websiteContext";
 import {useSelector} from "react-redux";
-import {BackUrlForDoc} from "constants/global";
+import {resolveImg} from "constants/global";
 import Modal from "components/platform/platformUI/modal";
 
 const Result = () => {
@@ -68,7 +68,7 @@ const Result = () => {
                 <div className={cls.imageModal}>
                     <div className={cls.imageModal__container}>
                         <div className={cls.imageModal__container_inner}>
-                            <img src={BackUrlForDoc + item} alt=""/>
+                            <img src={resolveImg(item)} alt=""/>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@ const Result = () => {
 
                     <div className={cls.background}>
                         <div className={cls.info}>
-                            {item.text.slice(0, 8)}
+                            {(item.text || "").slice(0, 8)}
                             {/*IELTS: 7.0*/}
                         </div>
                     </div>
@@ -113,7 +113,7 @@ const Result = () => {
                             className={cls.image__item}
                             onClick={() => onClick(item.certificate)}
                         >
-                            <img src={BackUrlForDoc + item.certificate} alt=""/>
+                            <img src={resolveImg(item.certificate)} alt=""/>
                         </div>
                     </div>
                     <div className={cls.teacher_name}>

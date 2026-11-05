@@ -27,7 +27,10 @@ export const V2_WEBSITE_ADMIN_ROLES = ["owner", "admin", "director", "manager", 
 // image field could come from either source.
 export const resolveImg = (url) => {
     if (!url) return url
-    return /^https?:\/\//.test(url) ? url : `${BackUrlForDoc}${url}`
+    if (/^https?:\/\//.test(url)) return url
+    // v2 stores uploads as /static/gennis_website/<file>, served by v2 itself
+    if (url.startsWith("/static/gennis_website")) return `https://v2.gennis.uz${url}`
+    return `${BackUrlForDoc}${url}`
 }
 
 

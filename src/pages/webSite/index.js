@@ -9,7 +9,7 @@ import BooksPage from "pages/webSite/books/booksPage";
 import Book from "pages/webSite/books/book/book";
 import TeacherInfo from "pages/webSite/teacherInfo";
 import NotFound from "pages/webSite/notFound";
-import {BackUrl, V2BackUrl, headers} from "constants/global";
+import {V2BackUrl} from "constants/global";
 import {
     fetchedAdvantages,
     fetchedCertificates, fetchedHrefs,
@@ -17,7 +17,6 @@ import {
     fetchedNews, fetchedSubjects, fetchedTeachers,
     fetchedVideoItems
 } from "slices/webSiteSlice";
-import {useHttp} from "hooks/http.hook";
 import {useDispatch, useSelector} from "react-redux";
 import {Context} from "context/websiteContext";
 
@@ -25,37 +24,72 @@ import {Context} from "context/websiteContext";
 const WebSite = () => {
 
 
-    const {request} = useHttp()
     const dispatch = useDispatch()
 
     useEffect(() => {
-        request(`${BackUrl}home_page/get_home_info`, "GET", null, headers())
+        // v2.gennis.uz owns all website content now (the legacy admin.gennis.uz
+        // backend is retired); map its payload onto the shapes the sections use.
+        fetch(`${V2BackUrl}gennis/website/home`)
+            .then(res => res.ok ? res.json() : Promise.reject(new Error("home " + res.status)))
             .then(res => {
-                if (res?.success) {
-                    dispatch(fetchedAdvantages(res?.advantages))
-                    dispatch(fetchedImageItems(res?.design))
-                    dispatch(fetchedVideoItems(res?.video))
-                    dispatch(fetchedNews(res?.news))
-                    dispatch(fetchedCertificates(res?.certificates))
-                    dispatch(fetchedHrefs(res?.links))
-                    dispatch(fetchedSubjects(res?.subjects))
-                    dispatch(fetchedTeachers(res?.teachers))
-                    dispatch(fetchedLocations(res?.locations))
-                } else {
-                    dispatch(fetchedAdvantages([]))
-                    dispatch(fetchedImageItems({}))
-                    dispatch(fetchedVideoItems({}))
-                    dispatch(fetchedNews([]))
-                    dispatch(fetchedCertificates([]))
-                    dispatch(fetchedHrefs([]))
-                    dispatch(fetchedSubjects([]))
-                    dispatch(fetchedTeachers([]))
-                    dispatch(fetchedLocations([]))
-                }
+                dispatch(fetchedAdvantages((res.advantages || []).map(item => ({
+                    id: item.id,
+                    name: item.title,
+                    text: "",
+                    img: item.image
+                }))))
+                dispatch(fetchedNews((res.news || []).map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    text: item.description,
+                    date: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
+                    images: item.image ? [{url: item.image}] : []
+                }))))
+                dispatch(fetchedImageItems({
+                    name: res.hero?.title || "",
+                    text: res.hero?.text || "",
+                    img: res.hero?.image || ""
+                }))
+                dispatch(fetchedVideoItems({}))
+                dispatch(fetchedHrefs((res.links || []).map(item => ({
+                    id: item.id,
+                    platform: item.platform,
+                    name: item.platform ? item.platform.charAt(0).toUpperCase() + item.platform.slice(1) : "",
+                    link: item.url
+                }))))
+                dispatch(fetchedSubjects((res.courses || []).map(item => ({
+                    id: item.id,
+                    desc: item.title,
+                    text: item.description,
+                    img: item.image
+                }))))
+                dispatch(fetchedTeachers((res.teachers || []).map(item => ({
+                    id: item.id,
+                    full_name: item.name,
+                    teacher_img: item.photo,
+                    subjects: [item.subject_display],
+                    text: item.bio || ""
+                }))))
+                dispatch(fetchedLocations((res.branches || []).map(item => ({
+                    id: item.id,
+                    display_order: item.display_order,
+                    name: item.name,
+                    number: item.phone,
+                    location: item.address,
+                    link: item.map_url
+                }))))
+                dispatch(fetchedCertificates((res.results || []).map(item => ({
+                    id: item.id,
+                    certificate: item.result_image,
+                    teacher: item.teacher_name,
+                    student: item.student_name,
+                    text: item.comment || ""
+                }))))
             })
-            // Legacy backend down/unreachable (CORS or 5xx): without this the
-            // image status never leaves "loading" and the loader spins forever.
             .catch(() => {
+                // v2 unreachable: render an empty page instead of spinning forever
+                dispatch(fetchedAdvantages([]))
+                dispatch(fetchedNews([]))
                 dispatch(fetchedImageItems({}))
                 dispatch(fetchedVideoItems({}))
                 dispatch(fetchedCertificates([]))
@@ -64,33 +98,6 @@ const WebSite = () => {
                 dispatch(fetchedTeachers([]))
                 dispatch(fetchedLocations([]))
             })
-
-        // v2.gennis.uz now owns advantages/news content (admin.gennis.uz is
-        // being retired) — fetched separately and overrides whatever the
-        // call above set for these two, once it resolves.
-        fetch(`${V2BackUrl}gennis/website/home`)
-            .then(res => res.ok ? res.json() : null)
-            .then(res => {
-                if (!res) return
-                if (Array.isArray(res.advantages)) {
-                    dispatch(fetchedAdvantages(res.advantages.map(item => ({
-                        id: item.id,
-                        name: item.title,
-                        text: "",
-                        img: item.image
-                    }))))
-                }
-                if (Array.isArray(res.news)) {
-                    dispatch(fetchedNews(res.news.map(item => ({
-                        id: item.id,
-                        title: item.title,
-                        text: item.description,
-                        date: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
-                        images: item.image ? [{url: item.image}] : []
-                    }))))
-                }
-            })
-            .catch(() => {})
     }, [])
 
 

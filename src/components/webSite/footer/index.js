@@ -4,8 +4,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import cls from "./style.module.sass";
 import logo from "assets/website/logo.png"
 import {useForm} from "react-hook-form";
-import {useHttp} from "hooks/http.hook";
-import {BackUrl} from "constants/global";
+import {submitLead} from "hooks/submitLead";
 import {Context} from "context/websiteContext";
 import {useSelector, useDispatch} from "react-redux";
 import {isMobileOnly} from "react-device-detect";
@@ -15,25 +14,12 @@ import {setMessage} from "slices/messageSlice";
 import {createPortal} from "react-dom";
 import DefaultLoader from "components/loader/defaultLoader/DefaultLoader";
 
-const list = [
-    {
-        label: "Youtube",
-        icon: `fab fa-youtube ${cls.icons}`,
-        src: "https:/genniscampus/"
-    }, {
-        label: "Telegram",
-        icon: `fab fa-telegram ${cls.icons}`,
-        src: "https:/genniscampus/"
-    }, {
-        label: "Instagram",
-        icon: `fab fa-instagram ${cls.icons}`,
-        src: "https:/genniscampus/"
-    }, {
-        label: "Facebook",
-        icon: `fab fa-facebook ${cls.icons}`,
-        src: "https:/genniscampus/"
-    }
-]
+const iconFor = (platform) => {
+    const key = (platform || "").toLowerCase()
+    return ["youtube", "telegram", "instagram", "facebook", "tiktok", "twitter"].includes(key)
+        ? `fab fa-${key} ${cls.icons}`
+        : `fas fa-link ${cls.icons}`
+}
 
 const Footer = () => {
 
@@ -54,9 +40,7 @@ const Footer = () => {
 
     const {register, handleSubmit} = useForm()
     const dispatch = useDispatch()
-    const {request} = useHttp()
     const [activeLoc, setActiveLoc] = useState(0)
-    const [selectedItem, setSelectedItem] = useState(locations[0])
     const [loading, setLoading] = useState(false)
 
     const animateChildren = {
@@ -80,40 +64,24 @@ const Footer = () => {
 
     const onSubmitReg = (data) => {
         setLoading(true)
-        request(`${BackUrl}lead/register_lead`, 'POST', JSON.stringify(data))
+        submitLead(data)
             .then(res => {
                 setLoading(false)
-                if (res.success) {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "success",
-                        active: true
-                    }))
-                } else {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "error",
-                        active: true
-                    }))
-                }
+                dispatch(setMessage({
+                    msg: res.msg,
+                    type: res.success ? "success" : "error",
+                    active: true
+                }))
             })
-            .catch(err => {
-                setLoading(false)
-            })
-    }
-
-    const selectItem = (id) => {
-        locations.filter(item => {
-            if (item.id === id) {
-                setSelectedItem((item))
-            }
-            return null
-        })
+            .catch(() => setLoading(false))
     }
 
     function compareById(a, b) {
-        return a.id - b.id;
+        return (a.display_order ?? a.id) - (b.display_order ?? b.id) || a.id - b.id;
     }
+
+    const sortedLocations = [...locations].sort(compareById)
+    const selectedItem = sortedLocations[activeLoc]
 
     return (
         <footer
@@ -136,16 +104,14 @@ const Footer = () => {
                     </div>
                     <div className={cls.branch}>
                         {
-                            locations && [...locations].sort(compareById).map((item, i) => {
+                            sortedLocations.map((item, i) => {
                                 return (
                                     <div
                                         className={classNames(cls.branch_inner, {
                                             [cls.active]: i === activeLoc
                                         })}
-                                        onClick={() => {
-                                            setActiveLoc(i)
-                                            selectItem(item.id)
-                                        }}
+                                        key={item.id}
+                                        onClick={() => setActiveLoc(i)}
                                     >
                                         {item.name}
                                     </div>
@@ -162,11 +128,11 @@ const Footer = () => {
                                 hrefs.map((item, i) => {
                                     return (
                                         <div key={i} className={cls.links}>
-                                            <i className={classNames(list[i]?.icon, cls.bigIcon, {
-                                                [cls.red]: i === 0
+                                            <i className={classNames(iconFor(item.platform), cls.bigIcon, {
+                                                [cls.red]: item.platform === "youtube"
                                             })}/>
                                             <h2>{item.name}</h2>
-                                            <a href={item?.link}>{list[i]?.src}</a>
+                                            <a href={item?.link} target="_blank" rel="noopener noreferrer">{item?.link}</a>
                                         </div>
                                     )
                                 })
@@ -175,7 +141,7 @@ const Footer = () => {
                     </div>
                     <div className={cls.box}>
                         <div className={cls.number}>
-                            <h2>{locations[activeLoc]?.name}</h2>
+                            <h2>{selectedItem?.name}</h2>
                             <div className={cls.phone}>
                                 <i className="fas fa-phone-alt"/>{selectedItem?.number}
                             </div>
@@ -185,10 +151,15 @@ const Footer = () => {
                             <div>{selectedItem?.location}</div>
                         </div>
                     </div>
-                    <iframe
-                        src={selectedItem?.link}
-                        style={{width: "600", height: "450", border: 0}} allowFullScreen="" loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"/>
+                    {
+                        selectedItem?.link?.includes("/embed") ? <iframe
+                            title="Filial xaritasi"
+                            src={selectedItem.link}
+                            style={{width: "600", height: "450", border: 0}} allowFullScreen="" loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"/>
+                            : selectedItem?.link ? <a href={selectedItem.link} target="_blank" rel="noopener noreferrer">Xaritada ko'rish</a>
+                            : null
+                    }
                 </div>
             </div>
             {
@@ -208,9 +179,9 @@ const Footer = () => {
                                         custom={i + 1}
                                         className={cls.links}
                                     >
-                                        <i className={list[i]?.icon}/>
+                                        <i className={iconFor(item.platform)}/>
                                         <h2>{item.name}</h2>
-                                        <a href={item?.link}>{list[i]?.src}</a>
+                                        <a href={item?.link} target="_blank" rel="noopener noreferrer">{item?.link}</a>
                                     </motion.div>
                                 )
                             })

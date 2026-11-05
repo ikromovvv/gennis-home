@@ -1,0 +1,117 @@
+@import "styles/abstracts/variables"
+
+.siteSection
+  width: 100%
+
+  &__header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    padding: 2rem
+    h1
+      font-family: 'Outfit', sans-serif
+      font-weight: 800
+      color: $color-grey-dark
+
+.siteForm
+  background: $color-white
+  border-radius: 18px
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06)
+  padding: 3rem
+  max-width: 80rem
+  display: flex
+  flex-direction: column
+  gap: 1.6rem
+  margin: 0 2rem
+
+  &--modal
+    width: 56rem
+    max-height: 85vh
+    overflow: auto
+    margin: 0
+
+  &__actions
+    display: flex
+    align-items: center
+    gap: 2rem
+
+  &__status
+    font-size: 1.4rem
+    color: #E5484D
+
+.siteField
+  display: flex
+  flex-direction: column
+  gap: .6rem
+  span
+    font-size: 1.4rem
+    color: #8a94a6
+    font-weight: 600
+  input, textarea
+    font-size: 1.6rem
+    padding: 1rem 1.2rem
+    border: 1px solid #d9dee7
+    border-radius: 10px
+    outline: none
+    font-family: inherit
+    &:focus
+      border-color: $color-main
+
+.siteImage
+  width: 100%
+  height: 18rem
+  border: 3px dashed rgba($color-main, 0.4)
+  border-radius: 16px
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+  color: #afafaf
+  font-size: 1.8rem
+  overflow: hidden
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
+
+.siteList
+  display: flex
+  flex-direction: column
+  gap: 1.2rem
+  padding: 0 2rem
+
+  &__item
+    display: flex
+    align-items: center
+    gap: 2rem
+    background: $color-white
+    border-radius: 16px
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06)
+    padding: 1.6rem 2.4rem
+    img
+      width: 7rem
+      height: 7rem
+      border-radius: 12px
+      object-fit: cover
+
+  &__info
+    flex: 1
+    display: flex
+    flex-direction: column
+    gap: .4rem
+    font-size: 1.5rem
+    color: #8a94a6
+    b
+      font-size: 1.8rem
+      color: $color-grey-dark
+
+  &__actions i
+    font-size: 2rem
+    margin-left: 1.6rem
+    cursor: pointer
+    color: $color-grey-dark
+
+  &__empty
+    font-size: 1.6rem
+    color: #8a94a6
+    padding: 2rem 0

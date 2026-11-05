@@ -8,6 +8,7 @@ import {V2BackUrl} from "constants/global";
 import Select from "components/platform/platformUI/select";
 import {Routes, Route, Outlet} from "react-router-dom";
 import Input from "components/platform/platformUI/input";
+import {Hero, Branches, SocialLinks, Courses, Teachers} from "./siteSettings";
 
 const v2Headers = (json = true) => {
     const token = sessionStorage.getItem("v2_access_token")
@@ -32,6 +33,11 @@ const PlatformWebsiteEdit = () => {
         <div className="websiteEdit">
             <div className="websiteEdit__content">
                 <Routes>
+                    <Route path="Hero" element={<Hero/>}/>
+                    <Route path="Branches" element={<Branches/>}/>
+                    <Route path="Courses" element={<Courses/>}/>
+                    <Route path="Teachers" element={<Teachers/>}/>
+                    <Route path="Links" element={<SocialLinks/>}/>
                     <Route path="Advantages" element={<Advantages/>}/>
                     <Route path="Comments" element={<Comments/>}/>
                     <Route path="Events" element={<Events/>}/>

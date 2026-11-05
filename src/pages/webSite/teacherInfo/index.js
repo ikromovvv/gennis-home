@@ -7,7 +7,7 @@ import {isMobile} from "react-device-detect";
 import {useParams} from "react-router-dom";
 
 import {useHttp} from "hooks/http.hook";
-import {BackUrl, BackUrlForDoc} from "constants/global";
+import {BackUrl, BackUrlForDoc, V2BackUrl, resolveImg} from "constants/global";
 import {
     fetchedStudents,
     fetchedGroups,
@@ -25,23 +25,34 @@ import certificat from "assets/dd20db0879a5d44f9368a 3.png"
 
 const TeacherInfo = () => {
     useEffect(() => {
-        request(`${BackUrl}teacher/get_teacher_data/${id}`)
+        fetch(`${V2BackUrl}gennis/website/teachers/${id}`)
+            .then(res => res.ok ? res.json() : Promise.reject(new Error("teacher " + res.status)))
             .then(res => {
-                console.log(res, "res")
-                const result = {
-                    ...res?.data,
-                    name: res?.full_name,
-                    subject: res?.subjects,
-                    teacher_img: res.teacher_img
-                }
-                dispatch(fetchedTeacher(result))
-                dispatch(fetchedResults(res?.list))
-                // if (!res.status) {
-                //     dispatch(fetchedTeacher({}))
-                //     dispatch(fetchedResults(res?.list))
-                // }
+                dispatch(fetchedTeacher({
+                    id: res.id,
+                    name: res.name,
+                    subject: [res.subject_display],
+                    teacher_img: res.photo,
+                    text: res.bio,
+                    telegram: res.telegram,
+                    instagram: res.instagram,
+                    facebook: res.facebook
+                }))
+                dispatch(fetchedResults((res.results || []).map(item => ({
+                    id: item.id,
+                    text: item.comment,
+                    student_img: item.student_photo,
+                    img: item.result_image,
+                    teacher_name: res.name,
+                    teacher_surname: "",
+                    student_name: item.student_name,
+                    student_surname: ""
+                }))))
             })
-            .catch(err => console.log(err))
+            .catch(() => {
+                dispatch(fetchedTeacher({}))
+                dispatch(fetchedResults([]))
+            })
     }, [])
 
     const token = sessionStorage.getItem("token")
@@ -133,7 +144,7 @@ const TeacherInfo = () => {
                 <div className={cls.imageModal}>
                     <div className={cls.imageModal__container}>
                         <div className={cls.imageModal__container_inner}>
-                            <img src={BackUrlForDoc + item} alt=""/>
+                            <img src={resolveImg(item)} alt=""/>
                         </div>
                     </div>
                 </div>
@@ -153,7 +164,7 @@ const TeacherInfo = () => {
 
                 <div className={classNames(cls.main__container_inner, cls.column)}>
                     <div className={cls.teacherImage}>
-                        <img src={teacher.teacher_img ? BackUrlForDoc+teacher.teacher_img : userImg} alt=""/>
+                        <img src={teacher.teacher_img ? resolveImg(teacher.teacher_img) : userImg} alt=""/>
                     </div>
                     <div className={cls.info}>
                         <h1 className={cls.info_inner}>{teacher?.name}</h1>
@@ -216,13 +227,13 @@ const TeacherInfo = () => {
                                         <div className={cls.info}>{item.text}</div>
                                     </div>
                                     <div className={cls.image}>
-                                        <img className={cls.image__teacher} src={item.student_img ? BackUrlForDoc+item.student_img : userImg} alt=""/>
+                                        <img className={cls.image__teacher} src={item.student_img ? resolveImg(item.student_img) : userImg} alt=""/>
 
                                         <div
                                             className={cls.image__item}
                                             onClick={() => onClick(item.img)}
                                         >
-                                            <img className={cls.image__student} src={BackUrlForDoc+item.img} alt=""/>
+                                            <img className={cls.image__student} src={resolveImg(item.img)} alt=""/>
                                         </div>
                                     </div>
                                     <div className={classNames(cls.teacher_name, cls.names)}>

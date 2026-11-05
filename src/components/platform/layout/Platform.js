@@ -6,10 +6,14 @@ import Logo from "assets/logo/Gennis logo.png"
 import PlatformMessage from "components/platform/platformMessage";
 
 const NAV_ITEMS = [
+    { to: "Hero", label: "Bosh sahifa", icon: "fa-house" },
+    { to: "Branches", label: "Filiallar", icon: "fa-location-dot" },
+    { to: "Courses", label: "Kurslar", icon: "fa-book-open" },
+    { to: "Teachers", label: "O'qituvchilar", icon: "fa-chalkboard-user" },
+    { to: "Links", label: "Ijtimoiy tarmoqlar", icon: "fa-share-nodes" },
     { to: "Advantages", label: "Afzalliklar", icon: "fa-star" },
     { to: "Events", label: "Yangiliklar", icon: "fa-newspaper" },
     { to: "Gallery", label: "Galereya", icon: "fa-images" },
-    { to: "Comments", label: "Sharhlar", icon: "fa-comments" },
 ]
 
 const Platform = () => {

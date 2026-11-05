@@ -6,8 +6,8 @@ import {motion} from "framer-motion";
 import {Link} from "react-router-dom";
 import {isMobile} from "react-device-detect";
 
-import {useHttp} from "hooks/http.hook";
-import {BackUrl, BackUrlForDoc} from "constants/global";
+import {submitLead} from "hooks/submitLead";
+import {resolveImg} from "constants/global";
 import Header from "components/webSite/header/Header";
 import {Context} from "context/websiteContext";
 
@@ -28,7 +28,6 @@ const Home = () => {
     }, [setSectionTop])
 
     const {register, handleSubmit} = useForm()
-    const {request} = useHttp()
     const dispatch = useDispatch()
 
     const [mobileMenuStatus, setMobileMenuStatus] = useState(false)
@@ -39,33 +38,23 @@ const Home = () => {
 
 
         setLoading(true)
-        request(`${BackUrl}lead/register_lead`, 'POST', JSON.stringify(data))
+        submitLead(data)
             .then(res => {
                 setLoading(false)
-                if (res.success) {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "success",
-                        active: true
-                    }))
-                } else {
-                    dispatch(setMessage({
-                        msg: res.msg,
-                        type: "error",
-                        active: true
-                    }))
-                }
+                dispatch(setMessage({
+                    msg: res.msg,
+                    type: res.success ? "success" : "error",
+                    active: true
+                }))
             })
-            .catch(err => {
-                setLoading(false)
-            })
+            .catch(() => setLoading(false))
     }
 
     return (
         <section
             className={cls.home}
             ref={sectionRef}
-            style={{backgroundImage: `url(${BackUrlForDoc + image?.img})`}}
+            style={{backgroundImage: `url(${image?.img ? resolveImg(image.img) : ''})`}}
         >
             {
                 loading ? createPortal(
