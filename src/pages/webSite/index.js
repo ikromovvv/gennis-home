@@ -53,7 +53,17 @@ const WebSite = () => {
                     dispatch(fetchedLocations([]))
                 }
             })
-            // .catch(err => console.log(err))
+            // Legacy backend down/unreachable (CORS or 5xx): without this the
+            // image status never leaves "loading" and the loader spins forever.
+            .catch(() => {
+                dispatch(fetchedImageItems({}))
+                dispatch(fetchedVideoItems({}))
+                dispatch(fetchedCertificates([]))
+                dispatch(fetchedHrefs([]))
+                dispatch(fetchedSubjects([]))
+                dispatch(fetchedTeachers([]))
+                dispatch(fetchedLocations([]))
+            })
 
         // v2.gennis.uz now owns advantages/news content (admin.gennis.uz is
         // being retired) — fetched separately and overrides whatever the
