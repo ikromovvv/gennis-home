@@ -402,7 +402,7 @@ const Example = ({images}) => {
         <div className={cls.box__img}>
             <Slider {...settings}>
                 {
-                    images.map(item => {
+                    images.filter(item => item?.url).map(item => {
                         return (
                             <div
                                 className={cls.img}

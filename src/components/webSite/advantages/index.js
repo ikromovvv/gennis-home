@@ -193,7 +193,7 @@ const Advantages = () => {
                             </RequireAuthChildren>
                             <h1>{item?.name}</h1>
                             <div className={cls.box}>
-                                <img src={resolveImg(item?.img)} alt=""/>
+                                {item?.img ? <img src={resolveImg(item.img)} alt=""/> : null}
                                 <div className={cls.info}>
                                     {item?.text}
                                 </div>

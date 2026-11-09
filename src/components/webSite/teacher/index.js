@@ -87,9 +87,9 @@ const Teacher = () => {
                             {item.text}
                         </div>
                         <div className={cls.icons}>
-                            <i className="fab fa-telegram"/>
-                            <i className="fab fa-instagram"/>
-                            <i className="fab fa-facebook"/>
+                            {item.telegram ? <a href={item.telegram} target="_blank" rel="noopener noreferrer"><i className="fab fa-telegram"/></a> : null}
+                            {item.instagram ? <a href={item.instagram} target="_blank" rel="noopener noreferrer"><i className="fab fa-instagram"/></a> : null}
+                            {item.facebook ? <a href={item.facebook} target="_blank" rel="noopener noreferrer"><i className="fab fa-facebook"/></a> : null}
                         </div>
                     </div>
                 </motion.div>

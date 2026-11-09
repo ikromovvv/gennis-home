@@ -72,7 +72,10 @@ const WebSite = () => {
                     full_name: item.name,
                     teacher_img: item.photo,
                     subjects: [item.subject_display],
-                    text: item.bio || ""
+                    text: item.bio || "",
+                    telegram: item.telegram,
+                    instagram: item.instagram,
+                    facebook: item.facebook
                 }))))
                 dispatch(fetchedLocations((res.branches || []).map(item => ({
                     id: item.id,
@@ -109,12 +112,8 @@ const WebSite = () => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(imageLoadingStatus === "loading" || imageLoadingStatus === "idle")
-        }, 3000)
-
-        return () => clearTimeout(timer)
-    },[imageLoadingStatus])
+        setLoading(imageLoadingStatus === "loading" || imageLoadingStatus === "idle")
+    }, [imageLoadingStatus])
 
     const [sectionTop, setSectionTop] = useState({
         home: null,
