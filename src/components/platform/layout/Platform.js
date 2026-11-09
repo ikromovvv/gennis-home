@@ -7,6 +7,7 @@ import PlatformMessage from "components/platform/platformMessage";
 
 const NAV_ITEMS = [
     { to: "Hero", label: "Bosh sahifa", icon: "fa-house" },
+    { to: "Video", label: "Video bo'limi", icon: "fa-circle-play" },
     { to: "Branches", label: "Filiallar", icon: "fa-location-dot" },
     { to: "Courses", label: "Kurslar", icon: "fa-book-open" },
     { to: "Teachers", label: "O'qituvchilar", icon: "fa-chalkboard-user" },

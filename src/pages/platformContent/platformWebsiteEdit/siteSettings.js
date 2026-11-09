@@ -103,6 +103,44 @@ export const Hero = () => {
     )
 }
 
+export const VideoBlock = () => {
+    const [form, setForm] = useState({title: "", text: "", url: ""})
+    const [status, setStatus] = useState("")
+
+    useEffect(() => {
+        api("gennis/website/video")
+            .then(res => setForm({title: res.title || "", text: res.text || "", url: res.url || ""}))
+            .catch(() => setStatus("Yuklab bo'lmadi"))
+    }, [])
+
+    const onSubmit = async (e) => {
+        e.preventDefault()
+        setStatus("Saqlanmoqda...")
+        try {
+            await api("gennis/website/video", "PUT", form)
+            setStatus("Saqlandi")
+        } catch (err) {
+            setStatus("Xatolik: saqlab bo'lmadi")
+        }
+    }
+
+    return (
+        <div className="siteSection">
+            <div className="siteSection__header"><h1>Video bo'limi</h1></div>
+            <form className="siteForm" onSubmit={onSubmit}>
+                <Field field={{label: "Sarlavha"}} value={form.title} onChange={v => setForm(f => ({...f, title: v}))}/>
+                <Field field={{label: "YouTube havolasi"}} value={form.url} onChange={v => setForm(f => ({...f, url: v}))}/>
+                <Field field={{label: "Matn", type: "textarea", rows: 8}} value={form.text}
+                       onChange={v => setForm(f => ({...f, text: v}))}/>
+                <div className="siteForm__actions">
+                    <button className="addBtn" type="submit">Saqlash</button>
+                    <span className="siteForm__status">{status}</span>
+                </div>
+            </form>
+        </div>
+    )
+}
+
 export const CrudSection = ({title, path, fields, imageSuffix, listFn, summary, canAdd = true}) => {
     const [items, setItems] = useState([])
     const [editing, setEditing] = useState(null)

@@ -50,7 +50,11 @@ const WebSite = () => {
                     text: res.hero?.text || "",
                     img: res.hero?.image || ""
                 }))
-                dispatch(fetchedVideoItems({}))
+                dispatch(fetchedVideoItems({
+                    name: res.video?.title || "",
+                    text: res.video?.text || "",
+                    url: res.video?.url || ""
+                }))
                 dispatch(fetchedHrefs((res.links || []).map(item => ({
                     id: item.id,
                     platform: item.platform,
