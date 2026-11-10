@@ -6,6 +6,7 @@ import logo from "assets/website/logo.png"
 import {useForm} from "react-hook-form";
 import {submitLead} from "hooks/submitLead";
 import {Context} from "context/websiteContext";
+import {useCurrentBranch} from "hooks/useCurrentBranch";
 import {useSelector, useDispatch} from "react-redux";
 import {isMobileOnly} from "react-device-detect";
 import {motion} from "framer-motion";
@@ -40,6 +41,7 @@ const Footer = () => {
 
     const {register, handleSubmit} = useForm()
     const dispatch = useDispatch()
+    const currentBranch = useCurrentBranch()
     const [activeLoc, setActiveLoc] = useState(0)
     const [loading, setLoading] = useState(false)
 
@@ -81,6 +83,12 @@ const Footer = () => {
     }
 
     const sortedLocations = [...locations].sort(compareById)
+    useEffect(() => {
+        if (!currentBranch) return
+        const idx = [...locations].sort(compareById).findIndex(item => item.id === currentBranch.id)
+        if (idx >= 0) setActiveLoc(idx)
+    }, [currentBranch?.id])
+
     const selectedItem = sortedLocations[activeLoc]
 
     return (
@@ -207,7 +215,7 @@ const Footer = () => {
                         placeholder="Telefon raqamingiz"
                         {...register("phone")}
                     />
-                    <select required {...register("location_id")}>
+                    <select required key={currentBranch?.id ?? "all"} defaultValue={currentBranch ? String(currentBranch.id) : ""} {...register("location_id")}>
                         <option value="">Filialni tanlang</option>
                         {
                             locations.map(item => {

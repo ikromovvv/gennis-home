@@ -10,6 +10,7 @@ import Book from "pages/webSite/books/book/book";
 import TeacherInfo from "pages/webSite/teacherInfo";
 import NotFound from "pages/webSite/notFound";
 import {V2BackUrl} from "constants/global";
+import {useCurrentBranch} from "hooks/useCurrentBranch";
 import {
     fetchedAdvantages,
     fetchedCertificates, fetchedHrefs,
@@ -83,7 +84,8 @@ const WebSite = () => {
                     name: item.name,
                     number: item.phone,
                     location: item.address,
-                    link: item.map_url
+                    link: item.map_url,
+                    subdomain: item.subdomain
                 }))))
                 dispatch(fetchedCertificates((res.results || []).map(item => ({
                     id: item.id,
@@ -107,6 +109,21 @@ const WebSite = () => {
             })
     }, [])
 
+
+    const currentBranch = useCurrentBranch()
+    useEffect(() => {
+        if (!currentBranch) return
+        const name = currentBranch.name
+        document.title = `Gennis o'quv markazi — ${name} filiali | ingliz tili va IELTS kurslari`
+        const desc = `Gennis o'quv markazi ${name} filiali: ingliz tili, IELTS va boshqa kurslar.` +
+            (currentBranch.location ? ` Manzil: ${currentBranch.location}.` : "") +
+            (currentBranch.number ? ` Telefon: ${currentBranch.number}.` : "")
+        document.querySelector('meta[name="description"]')?.setAttribute("content", desc)
+        document.querySelector('meta[property="og:title"]')?.setAttribute("content", `Gennis o'quv markazi — ${name} filiali`)
+        document.querySelector('meta[property="og:description"]')?.setAttribute("content", desc)
+        document.querySelectorAll('link[rel="canonical"], meta[property="og:url"]').forEach(el =>
+            el.setAttribute(el.tagName === "LINK" ? "href" : "content", window.location.origin + "/"))
+    }, [currentBranch?.id])
 
     const {imageLoadingStatus} = useSelector(state => state.website)
     const [loading, setLoading] = useState(true)

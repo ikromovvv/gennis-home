@@ -4,6 +4,7 @@ import {isMobile} from "react-device-detect";
 import cls from './style.module.sass';
 import {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {Context} from "context/websiteContext";
+import {useCurrentBranch} from "hooks/useCurrentBranch";
 import {useDispatch, useSelector} from "react-redux";
 import Modal from "components/platform/platformUI/modal";
 import InputForm from "components/platform/platformUI/inputForm";
@@ -53,6 +54,7 @@ const Course = () => {
         }
     }, [setSectionTop, subjectsLoadingStatus])
 
+    const currentBranch = useCurrentBranch()
     const {register, handleSubmit} = useForm()
     const [modalStatus, setModalStatus] = useState(false)
     const [clickedSubject, setClickedSubject] = useState()
@@ -164,7 +166,7 @@ const Course = () => {
                                 inputMode={"numeric"}
                                 placeholder={"+998 (__) ___ __ __"}
                             />
-                            <select required {...register("location_id")} >
+                            <select required key={currentBranch?.id ?? "all"} defaultValue={currentBranch ? String(currentBranch.id) : ""} {...register("location_id")} >
                                 <option value="">Filialni tanlang</option>
                                 {
                                     locations.map(item => {

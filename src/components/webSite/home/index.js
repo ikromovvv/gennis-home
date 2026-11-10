@@ -10,6 +10,7 @@ import {submitLead} from "hooks/submitLead";
 import {resolveImg} from "constants/global";
 import Header from "components/webSite/header/Header";
 import {Context} from "context/websiteContext";
+import {useCurrentBranch} from "hooks/useCurrentBranch";
 
 import cls from './style.module.sass'
 import WebButton from "components/webSite/webSiteUI/webButton/webButton";
@@ -30,6 +31,7 @@ const Home = () => {
     const {register, handleSubmit} = useForm()
     const dispatch = useDispatch()
 
+    const currentBranch = useCurrentBranch()
     const [mobileMenuStatus, setMobileMenuStatus] = useState(false)
     const {image,locations} = useSelector(state => state?.website)
     const [loading, setLoading] = useState(false)
@@ -82,7 +84,7 @@ const Home = () => {
             <motion.div className={cls.home_information}>
 
                 <motion.div className={cls.information_about}>
-                    <span className="badge">GENNIS Ta'lim Markazi</span>
+                    <span className="badge">GENNIS Ta'lim Markazi{currentBranch ? ` — ${currentBranch.name}` : ""}</span>
                     <motion.h1
                         // variants={animateText}
                         initial="hidden"
@@ -147,7 +149,7 @@ const Home = () => {
                             placeholder="+998 (__) ___ __ __"
                             {...register("phone")}
                         />
-                        <select required  {...register("location_id")} >
+                        <select required key={currentBranch?.id ?? "all"} defaultValue={currentBranch ? String(currentBranch.id) : ""} {...register("location_id")} >
                             <option value="">Filialni tanlang</option>
                             {
                                 locations.map(item => {

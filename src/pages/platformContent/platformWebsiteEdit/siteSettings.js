@@ -239,9 +239,10 @@ export const Branches = () => (
             {name: "phone", label: "Telefon", placeholder: "+998 90 123 45 67"},
             {name: "address", label: "To'liq manzil (ko'cha, uy)"},
             {name: "map_url", label: "Xarita havolasi (Google Maps 'Embed a map' src)"},
+            {name: "subdomain", label: "Subdomen (masalan: xojakent  →  xojakent.gennis.uz)"},
             {name: "display_order", label: "Tartib raqami", type: "number"}
         ]}
-        summary={item => <><b>{item.name}</b><span>{item.phone || "telefon yo'q"}</span><span>{item.address || "manzil yo'q"}</span></>}
+        summary={item => <><b>{item.name}</b><span>{item.phone || "telefon yo'q"}</span><span>{item.address || "manzil yo'q"}</span><span>{item.subdomain ? `${item.subdomain}.gennis.uz` : "subdomen yo'q"}</span></>}
     />
 )
 
